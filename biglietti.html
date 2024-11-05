@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acquisto Biglietti</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        input,
+        select,
+        label {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        #moreTickets {
+            display: none;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .flex-container>input {
+            flex: 1;
+            margin-right: 5px;
+        }
+
+        .flex-container>input:last-child {
+            margin-right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Acquista i tuoi biglietti</h1>
+    <form action="gestioneacquisto.php" method="POST">
+        Nome:
+        <input type="text" id="nome" name="nome" required>
+
+        Cognome:
+        <input type="text" id="cognome" name="cognome" required>
+
+        Codice Fiscale:
+        <input type="text" id="codiceFiscale" name="codiceFiscale" required>
+
+        Settore:
+        <select id="settore" name="settore" required>
+            <option value="curva">Curva - 30€</option>
+            <option value="tribuna_centrale">Tribuna Centrale - 80€</option>
+            <option value="tribuna_onore">Tribuna d'Onore - 120€</option>
+        </select>
+
+        Codice Sconto (opzionale):
+        <input type="text" id="codiceSconto" name="codiceSconto">
+
+        <div class="flex-container">
+            <label>
+                <input type="radio" name="tipoBiglietto" value="unico" onchange="toggleMoreTickets(false)" checked>
+                Biglietto unico
+            </label>
+            <label>
+                <input type="radio" name="tipoBiglietto" value="multiplo" onchange="toggleMoreTickets(true)">
+                Più biglietti
+            </label>
+        </div>
+
+        <div id="moreTickets">
+            Codice Fiscale aggiuntivo:
+            <input type="text" class="codiceFiscaleAggiuntivo" name="agg1" required>
+            Numero biglietti aggiuntivi:
+            <div class="flex-container">
+                <input type="number" id="numBiglietti" value="1" readonly>
+                <button type="button" onclick="addField()">+</button>
+                <button type="button" onclick="removeField()">-</button>
+            </div>
+        </div>
+
+        <input type="submit" value="Invia">
+    </form>
+
+    <script>
+        let ticketCount = 1;
+
+        function toggleMoreTickets(show) {
+            document.getElementById('moreTickets').style.display = show ? 'block' : 'none';
+            if (!show) {
+                clearAdditionalFields();
+            }
+        }
+
+        function addField() {
+            if (ticketCount < 4) {
+                ticketCount++;
+                const newField = document.createElement('input');
+                newField.type = 'text';
+                newField.className = 'codiceFiscaleAggiuntivo';
+                newField.name = 'agg' + ticketCount;
+                newField.required = true;
+                document.getElementById('moreTickets').insertBefore(newField, document.getElementById('numBiglietti').parentNode.nextSibling);
+                document.getElementById('numBiglietti').value = ticketCount;
+            }
+        }
+
+        function removeField() {
+            if (ticketCount > 1) {
+                const fields = document.getElementsByClassName('codiceFiscaleAggiuntivo');
+                fields[fields.length - 1].remove();
+                ticketCount--;
+                document.getElementById('numBiglietti').value = ticketCount;
+            }
+        }
+
+        function clearAdditionalFields() {
+            const fields = document.getElementsByClassName('codiceFiscaleAggiuntivo');
+            while (fields.length > 1) {
+                fields[fields.length - 1].remove();
+            }
+            ticketCount = 1;
+            document.getElementById('numBiglietti').value = ticketCount;
+        }
+    </script>
+</body>
+
+</html>
